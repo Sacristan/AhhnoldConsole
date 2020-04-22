@@ -1,0 +1,12 @@
+{
+    "name": "com.sacristan.ahhnold-console",
+    "version": "0.3.0",
+    "displayName": "Ahhnold Console",
+    "description": "Simple CLI developer console",
+    "unity": "2018.1",
+    "author": {
+        "name": "Ģirts Ķesteris",
+        "email": "girts.kesteris@gmail.com",
+        "url": "https://girtskesteris.xyz"
+    }
+}
