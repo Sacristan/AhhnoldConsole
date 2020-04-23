@@ -15,15 +15,15 @@ namespace Sacristan.Ahhnold
             public readonly static CommandRegistration[] RegistrableCommands = new CommandRegistration[0];
         }
 
-        internal class CommandRegistration
+        public class CommandRegistration
         {
-            internal delegate void CommandHandler(string[] args);
+            public delegate void CommandHandler(string[] args);
 
-            internal string command { get; private set; }
-            internal CommandHandler handler { get; private set; }
-            internal string help { get; private set; }
+            public string command { get; private set; }
+            public CommandHandler handler { get; private set; }
+            public string help { get; private set; }
 
-            internal CommandRegistration(string command, CommandHandler handler, string help)
+            public CommandRegistration(string command, CommandHandler handler, string help)
             {
                 this.command = command;
                 this.handler = handler;
@@ -46,7 +46,7 @@ namespace Sacristan.Ahhnold
 
             #region Event declarations
             internal delegate void LogChangedHandler(string[] log);
-            internal event LogChangedHandler logChanged;
+            internal event LogChangedHandler LogChanged;
 
             internal delegate void VisibilityChangedHandler(bool visible);
             internal event VisibilityChangedHandler visibilityChanged;
@@ -129,9 +129,9 @@ namespace Sacristan.Ahhnold
             private void UpdateCLI()
             {
                 Log = scrollback.ToArray();
-                if (logChanged != null)
+                if (LogChanged != null)
                 {
-                    logChanged(Log);
+                    LogChanged(Log);
                 }
             }
 
@@ -284,7 +284,7 @@ namespace Sacristan.Ahhnold
         void Start()
         {
             consoleController = new ConsoleController();
-            consoleController.logChanged += OnLogChanged;
+            consoleController.LogChanged += OnLogChanged;
             consoleController.DrawIntro();
         }
 
@@ -300,6 +300,29 @@ namespace Sacristan.Ahhnold
             {
                 HandleInput();
                 ScaleText();
+            }
+        }
+        public void OnGUI()
+        {
+            if (isEnabled)
+            {
+                GUI.depth = -99999999;
+
+                Rect inputFieldRect = new Rect(0, height - textSize, Screen.width, textSize);
+
+                DrawRect(new Rect(0, 0, Screen.width, height), new Color(0, 0, 0, BackgroundTransparency));
+
+                // History
+                guiStyle.alignment = TextAnchor.UpperLeft;
+                int historyCount = logHistory.Count;
+                for (int i = 0; i < historyCount; i++)
+                {
+                    GUI.Label(new Rect(0, height - textSize - historyCount * textSize + i * textSize, Screen.width, textSize), logHistory[i], guiStyle);
+                }
+
+                string typeLine = typeLineVisible ? "_" : "";
+
+                GUI.Label(inputFieldRect, "> " + inputTxt + typeLine, guiStyle);
             }
         }
 
@@ -335,30 +358,6 @@ namespace Sacristan.Ahhnold
             logHistory.Clear();
         }
 
-        public virtual void OnGUI()
-        {
-            if (isEnabled)
-            {
-                GUI.depth = -99999999;
-
-                Rect inputFieldRect = new Rect(0, height - textSize, Screen.width, textSize);
-
-                DrawRect(new Rect(0, 0, Screen.width, height), new Color(0, 0, 0, BackgroundTransparency));
-
-                // History
-                guiStyle.alignment = TextAnchor.UpperLeft;
-                int historyCount = logHistory.Count;
-                for (int i = 0; i < historyCount; i++)
-                {
-                    GUI.Label(new Rect(0, height - textSize - historyCount * textSize + i * textSize, Screen.width, textSize), logHistory[i], guiStyle);
-                }
-
-                string typeLine = typeLineVisible ? "_" : "";
-
-                GUI.Label(inputFieldRect, "> " + inputTxt + typeLine, guiStyle);
-            }
-        }
-
         public static void AppendLog(string log)
         {
             instance?.consoleController?.LogOutput(log);
@@ -368,6 +367,32 @@ namespace Sacristan.Ahhnold
         {
             instance?.consoleController?.LogError(log);
         }
+
+        public static bool GetFlagFromArg1(string[] args, bool currentValue, ref bool result)
+        {
+            if (args.Length == 0 || string.IsNullOrEmpty(args[0]))
+            {
+                result = !currentValue;
+            }
+            else
+            {
+                switch (args[0])
+                {
+                    case "on":
+                        result = true;
+                        break;
+                    case "off":
+                        result = false;
+                        break;
+                    default:
+                        Console.AppendError("param1 should be on/off");
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
 
         private void HandleInput()
         {

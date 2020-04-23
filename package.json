@@ -4,9 +4,20 @@
     "displayName": "Ahhnold Console",
     "description": "Simple CLI developer console",
     "unity": "2018.1",
+    "keywords": [
+        "Console",
+        "Debugging"
+    ],
     "author": {
-        "name": "Ģirts Ķesteris",
+        "name": "Ģirts 'Sacristan' Ķesteris",
         "email": "girts.kesteris@gmail.com",
         "url": "https://girtskesteris.xyz"
-    }
+    },
+    "samples": [
+        {
+            "displayName": "Import Console Command Registration script",
+            "description": "Import Console Command Registration script",
+            "path": "Samples~/ConsoleCommands"
+        }
+    ]
 }
