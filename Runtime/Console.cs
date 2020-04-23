@@ -7,12 +7,12 @@ namespace Sacristan.Ahhnold
 {
     public class Console : MonoBehaviour
     {
-        public const string VERSION = "0.3";
+        public const string VERSION = "0.3.0";
 
         #region Util classes
         internal partial class ConsoleCommands
         {
-            public readonly static Console.CommandRegistration[] RegistrableCommands = new Console.CommandRegistration[0];
+            public readonly static CommandRegistration[] RegistrableCommands = new CommandRegistration[0];
         }
 
         internal class CommandRegistration
@@ -284,7 +284,7 @@ namespace Sacristan.Ahhnold
         void Start()
         {
             consoleController = new ConsoleController();
-            consoleController.logChanged += onLogChanged;
+            consoleController.logChanged += OnLogChanged;
             consoleController.DrawIntro();
         }
 

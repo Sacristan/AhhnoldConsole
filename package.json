@@ -1,5 +1,5 @@
 {
-    "name": "com.sacristan.ahhnold-console",
+    "name": "com.sacristan.ahhnold.console",
     "version": "0.3.0",
     "displayName": "Ahhnold Console",
     "description": "Simple CLI developer console",
