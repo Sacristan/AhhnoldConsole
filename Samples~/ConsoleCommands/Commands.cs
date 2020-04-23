@@ -8,10 +8,11 @@ namespace Sacristan.Ahhnold.External
         public readonly static CommandRegistration[] RegistrableCommands = new CommandRegistration[] {
             new CommandRegistration("version", VersionAction, "Outputs game version"),
             new CommandRegistration("quit", QuitAction, "Quit Game"),
+
         };
 
         #region Command handlers
-        private static void QuitAction(string[] args)
+        static void QuitAction(string[] args)
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -22,12 +23,10 @@ namespace Sacristan.Ahhnold.External
 #endif
         }
 
-        private static void VersionAction(string[] args)
+        static void VersionAction(string[] args)
         {
-            //TODO fix
-            // Sacristan.Ahhnold.Console.AppendLog(string.Format("version: {0}", Application.version)); //TODO fix
+            ConsoleController.Log(string.Format("version: {0}", Application.version));
         }
-
         #endregion
     }
 }

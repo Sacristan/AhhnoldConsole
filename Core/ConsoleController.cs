@@ -6,7 +6,7 @@ namespace Sacristan.Ahhnold.Core
 {
     public class ConsoleController
     {
-        public const string VERSION = "0.3.0";
+        public const string VERSION = "0.3.1";
 
         private const int ScrollbackSize = 20;
         private const string ColorBad = "<color=red><b>";
@@ -17,25 +17,27 @@ namespace Sacristan.Ahhnold.Core
         private const string EndFormatColor = "</color>";
         private const string EndFormatColorBold = "</b></color>";
         private const string IntroASCII = @"<color=red><b>|AHHNOLD Console " + VERSION + "|" + EndFormatColorBold;
+        const string RepeatCmdName = "!!";
 
         #region Event declarations
         public delegate void LogChangedHandler(string[] log);
-        public event LogChangedHandler OnLogChanged;
 
+        public event LogChangedHandler OnLogChanged;
         internal delegate void VisibilityChangedHandler(bool visible);
         internal event VisibilityChangedHandler OnVisibilityChanged;
         #endregion
-
         Queue<string> scrollback = new Queue<string>(ScrollbackSize);
         List<string> commandHistory = new List<string>();
         Dictionary<string, CommandRegistration> commands = new Dictionary<string, CommandRegistration>();
 
-        public string[] Log { get; private set; }
+        static ConsoleController instance;
 
-        const string RepeatCmdName = "!!";
+        public string[] Logs { get; private set; }
 
         public ConsoleController(CommandRegistration[] commandRegistrations)
         {
+            instance = this;
+
             RegisterCommand("help", HelpAction, "Print this help.");
             RegisterCommand(RepeatCmdName, RepeatCommandAction, "Repeat last command.");
             RegisterCommand("clear", ClearAction, "Clear Console");
@@ -47,20 +49,25 @@ namespace Sacristan.Ahhnold.Core
             }
         }
 
+        ~ConsoleController()
+        {
+            instance = null;
+        }
+
         public void DrawIntro()
         {
             AppendLogLine(IntroASCII);
         }
 
-        public void LogOutput(string line)
+        public static void Log(string line)
         {
-            AppendLogLine(string.Format("{0}{1}{2}", FormatOutput, line, EndFormatColorBold));
+            instance.AppendLogLine(string.Format("{0}{1}{2}", FormatOutput, line, EndFormatColorBold));
         }
 
-        public void LogError(string line)
+        public static void LogError(string line)
         {
-            AppendLogLine(line);
-            AppendLogLine(string.Format("{0}{1}{2}", ColorBad, line, EndFormatColorBold));
+            instance.AppendLogLine(line);
+            instance.AppendLogLine(string.Format("{0}{1}{2}", ColorBad, line, EndFormatColorBold));
         }
 
         public void RunCommandString(string commandString)
@@ -101,8 +108,8 @@ namespace Sacristan.Ahhnold.Core
 
         private void UpdateCLI()
         {
-            Log = scrollback.ToArray();
-            OnLogChanged?.Invoke(Log);
+            Logs = scrollback.ToArray();
+            OnLogChanged?.Invoke(Logs);
         }
 
         private void RegisterCommand(CommandRegistration commandRegistration)

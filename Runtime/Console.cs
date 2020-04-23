@@ -135,16 +135,6 @@ namespace Sacristan.Ahhnold.Runtime
             logHistory.Clear();
         }
 
-        public static void AppendLog(string log)
-        {
-            instance?.consoleController?.LogOutput(log);
-        }
-
-        public static void AppendError(string log)
-        {
-            instance?.consoleController?.LogError(log);
-        }
-
         public static bool GetFlagFromArg1(string[] args, bool currentValue, ref bool result)
         {
             if (args.Length == 0 || string.IsNullOrEmpty(args[0]))
@@ -162,14 +152,13 @@ namespace Sacristan.Ahhnold.Runtime
                         result = false;
                         break;
                     default:
-                        Console.AppendError("param1 should be on/off");
+                        ConsoleController.LogError("param1 should be on/off");
                         return false;
                 }
             }
 
             return true;
         }
-
 
         private void HandleInput()
         {
