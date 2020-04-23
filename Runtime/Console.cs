@@ -46,10 +46,10 @@ namespace Sacristan.Ahhnold
 
             #region Event declarations
             internal delegate void LogChangedHandler(string[] log);
-            internal event LogChangedHandler LogChanged;
+            internal event LogChangedHandler OnLogChanged;
 
             internal delegate void VisibilityChangedHandler(bool visible);
-            internal event VisibilityChangedHandler visibilityChanged;
+            internal event VisibilityChangedHandler OnVisibilityChanged;
             #endregion
 
             Queue<string> scrollback = new Queue<string>(ScrollbackSize);
@@ -125,14 +125,10 @@ namespace Sacristan.Ahhnold
                 UpdateCLI();
             }
 
-
             private void UpdateCLI()
             {
                 Log = scrollback.ToArray();
-                if (LogChanged != null)
-                {
-                    LogChanged(Log);
-                }
+                OnLogChanged?.Invoke(Log);
             }
 
             private void RegisterCommand(CommandRegistration commandRegistration)
@@ -208,10 +204,7 @@ namespace Sacristan.Ahhnold
 
             void HideAction(string[] args)
             {
-                if (visibilityChanged != null)
-                {
-                    visibilityChanged(false);
-                }
+                OnVisibilityChanged?.Invoke(false);
             }
 
             void RepeatCommandAction(string[] args)
@@ -284,7 +277,7 @@ namespace Sacristan.Ahhnold
         void Start()
         {
             consoleController = new ConsoleController();
-            consoleController.LogChanged += OnLogChanged;
+            consoleController.OnLogChanged += OnLogChanged;
             consoleController.DrawIntro();
         }
 
