@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sacristan.Ahhnold.Core;
-using Sacristan.Ahhnold.External;
 
-namespace Sacristan.Ahhnold.Runtime
+namespace Sacristan.Ahhnold.Core
 {
-    internal class ConsoleController
+    public class ConsoleController
     {
         public const string VERSION = "0.3.0";
 
@@ -20,8 +19,8 @@ namespace Sacristan.Ahhnold.Runtime
         private const string IntroASCII = @"<color=red><b>|AHHNOLD Console " + VERSION + "|" + EndFormatColorBold;
 
         #region Event declarations
-        internal delegate void LogChangedHandler(string[] log);
-        internal event LogChangedHandler OnLogChanged;
+        public delegate void LogChangedHandler(string[] log);
+        public event LogChangedHandler OnLogChanged;
 
         internal delegate void VisibilityChangedHandler(bool visible);
         internal event VisibilityChangedHandler OnVisibilityChanged;
@@ -35,16 +34,16 @@ namespace Sacristan.Ahhnold.Runtime
 
         const string RepeatCmdName = "!!";
 
-        public ConsoleController()
+        public ConsoleController(CommandRegistration[] commandRegistrations)
         {
             RegisterCommand("help", HelpAction, "Print this help.");
             RegisterCommand(RepeatCmdName, RepeatCommandAction, "Repeat last command.");
             RegisterCommand("clear", ClearAction, "Clear Console");
             RegisterCommand("hide", HideAction, "Hide the console.");
 
-            for (int i = 0; i < Commands.RegistrableCommands.Length; i++)
+            for (int i = 0; i < commandRegistrations.Length; i++)
             {
-                RegisterCommand(Commands.RegistrableCommands[i]);
+                RegisterCommand(commandRegistrations[i]);
             }
         }
 

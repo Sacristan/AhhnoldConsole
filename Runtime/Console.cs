@@ -60,7 +60,7 @@ namespace Sacristan.Ahhnold.Runtime
 
         void Start()
         {
-            consoleController = new ConsoleController();
+            consoleController = new ConsoleController(Commands.RegistrableCommands);
             consoleController.OnLogChanged += OnLogChanged;
             consoleController.DrawIntro();
         }
