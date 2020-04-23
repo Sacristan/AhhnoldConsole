@@ -1,0 +1,7 @@
+﻿{
+	"name": "Unity.Sacristan.Ahhnold",
+	"references": [ 
+		"Unity.Sacristan.Ahhnold.Core",
+		"Unity.Sacristan.Ahhnold.External"
+	]
+}
