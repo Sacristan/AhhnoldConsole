@@ -1,5 +1,5 @@
 {
-	"displayName":"AhhnoldConsoleCommandRegistration",
-	"description": "AhhnoldConsoleCommandRegistration",
+	"displayName":"Ahhnold Console Command registration",
+	"description": "Import Console Command Registration script",
 	"createSeparatePackage": false
 }

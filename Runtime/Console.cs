@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sacristan.Ahhnold.External;
 
 namespace Sacristan.Ahhnold
 {
@@ -10,26 +11,6 @@ namespace Sacristan.Ahhnold
         public const string VERSION = "0.3.0";
 
         #region Util classes
-        internal partial class ConsoleCommands
-        {
-            public readonly static CommandRegistration[] RegistrableCommands = new CommandRegistration[0];
-        }
-
-        public class CommandRegistration
-        {
-            public delegate void CommandHandler(string[] args);
-
-            public string command { get; private set; }
-            public CommandHandler handler { get; private set; }
-            public string help { get; private set; }
-
-            public CommandRegistration(string command, CommandHandler handler, string help)
-            {
-                this.command = command;
-                this.handler = handler;
-                this.help = help;
-            }
-        }
 
         internal class ConsoleController
         {
@@ -67,9 +48,9 @@ namespace Sacristan.Ahhnold
                 RegisterCommand("clear", ClearAction, "Clear Console");
                 RegisterCommand("hide", HideAction, "Hide the console.");
 
-                for (int i = 0; i < ConsoleCommands.RegistrableCommands.Length; i++)
+                for (int i = 0; i < Commands.RegistrableCommands.Length; i++)
                 {
-                    RegisterCommand(ConsoleCommands.RegistrableCommands[i]);
+                    RegisterCommand(Commands.RegistrableCommands[i]);
                 }
             }
 
@@ -165,10 +146,11 @@ namespace Sacristan.Ahhnold
             {
                 LinkedList<char> parmChars = new LinkedList<char>(commandString.ToCharArray());
                 bool inQuote = false;
-                var node = parmChars.First;
+
+                LinkedListNode<char> node = parmChars.First;
                 while (node != null)
                 {
-                    var next = node.Next;
+                    LinkedListNode<char> next = node.Next;
                     if (node.Value == '"')
                     {
                         inQuote = !inQuote;
@@ -180,6 +162,7 @@ namespace Sacristan.Ahhnold
                     }
                     node = next;
                 }
+
                 char[] parmCharsArr = new char[parmChars.Count];
                 parmChars.CopyTo(parmCharsArr, 0);
                 return (new string(parmCharsArr)).Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);

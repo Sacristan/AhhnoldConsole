@@ -1,3 +1,4 @@
 ﻿{
-	"name": "Unity.Sacristan.Ahhnold"
+	"name": "Unity.Sacristan.Ahhnold",
+	"references": [ "Unity.Sacristan.Ahhnold.External" ]
 }
