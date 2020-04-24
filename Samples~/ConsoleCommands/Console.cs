@@ -6,9 +6,8 @@ using Sacristan.Ahhnold.Core;
 public class Console : Sacristan.Ahhnold.Runtime.Console
 {
     public override CommandRegistration[] RegistrableCommands => new CommandRegistration[] {
-            new CommandRegistration("version", VersionAction, "Outputs game version"),
-            new CommandRegistration("quit", QuitAction, "Quit Game"),
-            new CommandRegistration("test", TestAction, "Test Shit"),
+        new CommandRegistration("version", VersionAction, "Outputs game version"),
+        new CommandRegistration("quit", QuitAction, "Quit Game"),
     };
 
     #region Command handlers
@@ -17,9 +16,9 @@ public class Console : Sacristan.Ahhnold.Runtime.Console
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #elif UNITY_WEBPLAYER
-            Application.OpenURL(webplayerQuitURL);
+        Application.OpenURL(webplayerQuitURL);
 #else
-            Application.Quit();
+        Application.Quit();
 #endif
     }
 
@@ -28,9 +27,5 @@ public class Console : Sacristan.Ahhnold.Runtime.Console
         ConsoleController.Log(string.Format("version: {0}", Application.version));
     }
 
-    static void TestAction(string[] args)
-    {
-        GameObject.FindObjectOfType<TestConsole>().Test();
-    }
     #endregion
 }
