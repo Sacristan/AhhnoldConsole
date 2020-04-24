@@ -11,5 +11,7 @@ Its a ingame developer console. Like lots of older games used to have.
 * Add imported sample component to any game object
 * Press ~ to see the magic!
 
+Uses IMGUI for displaying its content.
+
 Huge inspiration:
 * Clover https://twitter.com/clovergruff
