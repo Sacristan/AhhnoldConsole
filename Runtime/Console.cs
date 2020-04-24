@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sacristan.Ahhnold.Core;
-using Sacristan.Ahhnold.External;
 
 namespace Sacristan.Ahhnold.Runtime
 {
@@ -38,6 +37,8 @@ namespace Sacristan.Ahhnold.Runtime
 
         private ConsoleController consoleController;
 
+        public virtual CommandRegistration[] RegistrableCommands => new CommandRegistration[0];
+
         protected void Awake()
         {
             if (instance == null)
@@ -60,7 +61,7 @@ namespace Sacristan.Ahhnold.Runtime
 
         void Start()
         {
-            consoleController = new ConsoleController(Commands.RegistrableCommands);
+            consoleController = new ConsoleController(RegistrableCommands);
             consoleController.OnLogChanged += OnLogChanged;
             consoleController.DrawIntro();
         }

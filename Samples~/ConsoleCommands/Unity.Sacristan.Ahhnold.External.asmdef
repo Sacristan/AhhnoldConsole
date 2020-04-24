@@ -1,6 +1,0 @@
-﻿{
-	"name": "Unity.Sacristan.Ahhnold.External",
-	"references": [ 
-		"Unity.Sacristan.Ahhnold.Core"
-	]
-}
