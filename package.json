@@ -1,6 +1,6 @@
 {
     "name": "com.sacristan.ahhnold.console",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "displayName": "Ahhnold Console",
     "description": "Simple CLI developer console",
     "unity": "2018.1",
@@ -15,8 +15,8 @@
     },
     "samples": [
         {
-            "displayName": "Import Console Command Registration script",
-            "description": "Import Console Command Registration script",
+            "displayName": "ExampleUsage",
+            "description": "Import Console AssemblyCSharp script",
             "path": "Samples~/ConsoleCommands"
         }
     ]

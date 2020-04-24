@@ -7,8 +7,8 @@ Its a ingame developer console. Like lots of older games used to have.
 * Paste link `git@github.com:Sacristan/AhhnoldConsole.git`
 
 # How to use?
-* Import sample command registration
-* Add Console.cs to any game object
+* Import sample command registration (under package description)
+* Add imported sample component to any game object
 * Press ~ to see the magic!
 
 Huge inspiration:

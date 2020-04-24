@@ -6,7 +6,7 @@ using Sacristan.Ahhnold.Core;
 
 namespace Sacristan.Ahhnold.Runtime
 {
-    public class Console : MonoBehaviour
+    public abstract class Console : MonoBehaviour
     {
         const string ColorBad = "<color=red><b>";
         const string ColorVariable = "<color=brown><b>";
