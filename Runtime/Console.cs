@@ -4,40 +4,123 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sacristan.Ahhnold.Core;
 
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
+
 namespace Sacristan.Ahhnold.Runtime
 {
     public abstract class Console : MonoBehaviour
     {
         const string ColorBad = "<color=red><b>";
         const string ColorVariable = "<color=brown><b>";
-        const string endFormat = "</b></color>";
-
+        const string EndFormat = "</b></color>";
         const string WordEnabled = "<color=green><b>enabled</b></color>";
         const string WordDisabled = "<color=red><b>disabled</b></color>";
         const float BackgroundTransparency = 0.9f;
-
         private static Console instance;
-
         private static bool isEnabled;
         private static GUIStyle guiStyle;
         private float textSize = 16;
         private float height = 160;
-
         public static string inputTxt = "";
         private bool typeLineVisible = true;
-
         private Vector2 preClickPos;
         private Vector2 preClickDiff;
         private bool scrolling;
-
         private static List<string> logHistory;
         private string tempConsoleOutput;
-
         private static Texture2D pixelTex;
-
         private ConsoleController consoleController;
-
         public virtual CommandRegistration[] RegistrableCommands => new CommandRegistration[0];
+        private bool OpenConsoleInput
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return GetKeyDown(Key.Backquote) || GetKeyDown(Key.Quote);
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKeyDown(KeyCode.BackQuote) || Input.GetKeyDown(KeyCode.Quote);
+#else
+                return false;
+#endif
+            }
+        }
+
+        private bool ControlPressed
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return GetKey(Key.LeftCtrl);
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKey(KeyCode.LeftControl);
+#else
+                return false;
+#endif
+            }
+        }
+
+        private bool PageUp
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return GetKeyDown(Key.PageUp);
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKeyDown(KeyCode.PageUp);
+#else
+                return false;
+#endif
+            }
+        }
+
+        private bool PageDown
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return GetKeyDown(Key.PageDown);
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKeyDown(KeyCode.PageDown);
+#else
+                return false;
+#endif
+            }
+        }
+
+        private bool Plus
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return GetKeyDown(Key.NumpadPlus); //TODO GetKeyDown(Key.Plus) not found
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus);
+#else
+                return false;
+#endif
+            }
+        }
+
+        private bool Minus
+        {
+            get
+            {
+#if ENABLE_INPUT_SYSTEM
+                return GetKeyDown(Key.Minus) || GetKeyDown(Key.NumpadMinus);
+#elif ENABLE_LEGACY_INPUT_MANAGER
+                return Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus);
+#else
+                return false;
+#endif
+            }
+        }
+
+#if ENABLE_INPUT_SYSTEM
+        private bool GetKey(Key key) => Keyboard.current[key].isPressed;
+        private bool GetKeyDown(Key key) => Keyboard.current[key].wasPressedThisFrame;
+#endif
 
         protected void Awake()
         {
@@ -51,11 +134,9 @@ namespace Sacristan.Ahhnold.Runtime
                 Destroy(this);
             }
 
-            // Setup the GUIStyle
             guiStyle = new GUIStyle();
             guiStyle.normal.textColor = Color.white;
 
-            // Setup history lists
             logHistory = new List<string>();
         }
 
@@ -64,11 +145,15 @@ namespace Sacristan.Ahhnold.Runtime
             consoleController = new ConsoleController(RegistrableCommands);
             consoleController.OnLogChanged += OnLogChanged;
             consoleController.DrawIntro();
+
+#if ENABLE_INPUT_SYSTEM
+            Keyboard.current.onTextInput += HandleInputChar;
+#endif
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.BackQuote) || Input.GetKeyDown(KeyCode.Quote))
+            if (OpenConsoleInput)
             {
                 isEnabled = !isEnabled;
                 if (isEnabled) StartCoroutine(BlinkTypeLine());
@@ -76,10 +161,13 @@ namespace Sacristan.Ahhnold.Runtime
 
             if (isEnabled)
             {
+#if !ENABLE_INPUT_SYSTEM && ENABLE_LEGACY_INPUT_MANAGER
                 HandleInput();
+#endif
                 ScaleText();
             }
         }
+
         public void OnGUI()
         {
             if (isEnabled)
@@ -161,30 +249,35 @@ namespace Sacristan.Ahhnold.Runtime
             return true;
         }
 
+#if !ENABLE_INPUT_SYSTEM && ENABLE_LEGACY_INPUT_MANAGER
         private void HandleInput()
         {
             for (int i = 0; i < Input.inputString.Length; i++)
             {
                 char c = Input.inputString[i];
-                // Backspace - Remove the last character
-                if (c == "\b"[0])
+                HandleInputChar(c);
+            }
+        }
+#endif
+        private void HandleInputChar(char c)
+        {
+            // Backspace - Remove the last character
+            if (c == "\b"[0])
+            {
+                if (inputTxt.Length != 0)
                 {
-                    if (inputTxt.Length != 0)
-                    {
-                        inputTxt = inputTxt.Substring(0, inputTxt.Length - 1);
-                    }
-                }
-                else if (c == "\n"[0] || c == "\r"[0]) // "\n" for Mac, "\r" for windows.
-                {
-                    consoleController.RunCommandString(inputTxt);
-                    inputTxt = string.Empty;
-                }
-                else if (c != "`"[0] && c != "'"[0]) // Write text
-                {
-                    inputTxt += c;
+                    inputTxt = inputTxt.Substring(0, inputTxt.Length - 1);
                 }
             }
-
+            else if (c == "\n"[0] || c == "\r"[0]) // "\n" for Mac, "\r" for windows.
+            {
+                consoleController.RunCommandString(inputTxt);
+                inputTxt = string.Empty;
+            }
+            else if (c != "`"[0] && c != "'"[0]) // Write text
+            {
+                inputTxt += c;
+            }
         }
 
         private void ScaleText()
@@ -200,31 +293,22 @@ namespace Sacristan.Ahhnold.Runtime
 
         private void ScaleTextScroll()
         {
-            float scrollAmount = Input.GetAxis("Mouse ScrollWheel");
-
-            if (Input.GetKey(KeyCode.LeftControl))
+            if (ControlPressed)
             {
-                textSize += scrollAmount * 8;
-
-                if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
-                {
-                    textSize = 16;
-                }
-
+                if (Plus) textSize++;
+                if (Minus) textSize--;
                 textSize = Mathf.Clamp(textSize, 8, 64);
-
                 guiStyle.fontSize = (int)textSize;
             }
         }
 
         private void ScaleTextScrollKeyboard()
         {
-            // Resizing with keyboard
-            if (Input.GetKeyDown(KeyCode.PageDown))
+            if (PageDown)
             {
                 height += textSize;
             }
-            if (Input.GetKeyDown(KeyCode.PageUp))
+            if (PageUp)
             {
                 height -= textSize;
             }
@@ -238,7 +322,7 @@ namespace Sacristan.Ahhnold.Runtime
         private static void MakePixelTex()
         {
             pixelTex = new Texture2D(1, 1);
-            pixelTex.SetPixel(0, 0, new Color(1, 1, 1, 1));
+            pixelTex.SetPixel(0, 0, Color.white);
             pixelTex.Apply();
         }
         private static void DrawRect(Rect rect, Color color)
@@ -251,7 +335,7 @@ namespace Sacristan.Ahhnold.Runtime
 
             GUI.color = color;
             GUI.DrawTexture(rect, pixelTex);
-            GUI.color = new Color(1, 1, 1, 1);
+            GUI.color = Color.white;
         }
     }
 }

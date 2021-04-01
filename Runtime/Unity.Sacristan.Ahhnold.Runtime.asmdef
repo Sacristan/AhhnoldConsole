@@ -1,6 +1,16 @@
-﻿{
-	"name": "Unity.Sacristan.Ahhnold",
-	"references": [ 
-		"Unity.Sacristan.Ahhnold.Core"
-	]
+{
+    "name": "Unity.Sacristan.Ahhnold",
+    "references": [
+        "Unity.Sacristan.Ahhnold.Core",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

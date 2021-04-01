@@ -6,8 +6,7 @@ namespace Sacristan.Ahhnold.Core
 {
     public class ConsoleController
     {
-        public const string VERSION = "0.3.2";
-
+        public const string VERSION = "0.4.0";
         private const int ScrollbackSize = 20;
         private const string ColorBad = "<color=red><b>";
         private const string FormatCommandStart = "<color=gray><i>";
