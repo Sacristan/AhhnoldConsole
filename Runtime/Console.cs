@@ -261,6 +261,8 @@ namespace Sacristan.Ahhnold.Runtime
 #endif
         private void HandleInputChar(char c)
         {
+            if(!isEnabled) return;
+
             // Backspace - Remove the last character
             if (c == "\b"[0])
             {
