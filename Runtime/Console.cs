@@ -151,6 +151,13 @@ namespace Sacristan.Ahhnold.Runtime
 #endif
         }
 
+        void OnDestroy()
+        {
+#if ENABLE_INPUT_SYSTEM
+            Keyboard.current.onTextInput -= HandleInputChar;
+#endif
+        }
+
         void Update()
         {
             if (OpenConsoleInput)
@@ -261,7 +268,7 @@ namespace Sacristan.Ahhnold.Runtime
 #endif
         private void HandleInputChar(char c)
         {
-            if(!isEnabled) return;
+            if (!isEnabled) return;
 
             // Backspace - Remove the last character
             if (c == "\b"[0])
