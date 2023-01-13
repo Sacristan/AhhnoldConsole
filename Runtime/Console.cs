@@ -231,29 +231,41 @@ namespace Sacristan.Ahhnold.Runtime
             logHistory.Clear();
         }
 
-        public static bool GetFlagFromArg1(string[] args, bool currentValue, ref bool result)
+        public static bool GetValueFromParam(string[] args, out int result, int paramIndex = 0)
         {
-            if (args.Length == 0 || string.IsNullOrEmpty(args[0]))
+            result = 0;
+
+            if (args.Length == 0 || args.Length < paramIndex || string.IsNullOrEmpty(args[paramIndex]))
             {
-                result = !currentValue;
+                ConsoleController.LogError($"missing parameter @ {paramIndex}");
             }
             else
             {
-                switch (args[0])
+                return int.TryParse(args[paramIndex], out result);
+            }
+            return false;
+        }
+
+        public static bool OnOffTrigger(string[] args, out bool isOn, int paramIndex = 0)
+        {
+            isOn = false;
+
+            if (args.Length == 0 || args.Length < paramIndex || string.IsNullOrEmpty(args[paramIndex]))
+            {
+                ConsoleController.LogError($"missing parameter @ {paramIndex}");
+            }
+            else
+            {
+                string arg = args[paramIndex]?.ToLower().Trim();
+                if (arg is "on" || arg is "off")
                 {
-                    case "on":
-                        result = true;
-                        break;
-                    case "off":
-                        result = false;
-                        break;
-                    default:
-                        ConsoleController.LogError("param1 should be on/off");
-                        return false;
+                    isOn = arg == "on";
+                    return true;
                 }
+                else ConsoleController.LogError("param1 should be [on/off]");
             }
 
-            return true;
+            return false;
         }
 
 #if !ENABLE_INPUT_SYSTEM && ENABLE_LEGACY_INPUT_MANAGER

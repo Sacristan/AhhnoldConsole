@@ -1,6 +1,6 @@
 {
     "name": "com.sacristan.ahhnold.console",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "displayName": "Ahhnold Console",
     "description": "Simple CLI developer console",
     "unity": "2018.1",
