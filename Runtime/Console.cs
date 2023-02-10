@@ -231,13 +231,13 @@ namespace Sacristan.Ahhnold.Runtime
             logHistory.Clear();
         }
 
-        public static bool GetValueFromParam(string[] args, out int result, int paramIndex = 0)
+        public static bool GetValueFromParam(string[] args, out int result, int paramIndex = 0, bool optional = false)
         {
             result = 0;
 
-            if (args.Length == 0 || args.Length < paramIndex || string.IsNullOrEmpty(args[paramIndex]))
+            if (args.Length == 0 || args.Length <= paramIndex || string.IsNullOrEmpty(args[paramIndex]))
             {
-                ConsoleController.LogError($"missing parameter @ {paramIndex}");
+                if (!optional) ConsoleController.LogError($"missing parameter @ {paramIndex}");
             }
             else
             {
@@ -246,13 +246,13 @@ namespace Sacristan.Ahhnold.Runtime
             return false;
         }
 
-        public static bool OnOffTrigger(string[] args, out bool isOn, int paramIndex = 0)
+        public static bool OnOffTrigger(string[] args, out bool isOn, int paramIndex = 0, bool optional = false)
         {
             isOn = false;
 
-            if (args.Length == 0 || args.Length < paramIndex || string.IsNullOrEmpty(args[paramIndex]))
+            if (args.Length == 0 || args.Length <= paramIndex || string.IsNullOrEmpty(args[paramIndex]))
             {
-                ConsoleController.LogError($"missing parameter @ {paramIndex}");
+                if (!optional) ConsoleController.LogError($"missing parameter @ {paramIndex}");
             }
             else
             {
