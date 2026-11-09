@@ -94,7 +94,7 @@ namespace Sacristan.Ahhnold.Runtime
             get
             {
 #if ENABLE_INPUT_SYSTEM
-                return GetKeyDown(Key.NumpadPlus); //TODO GetKeyDown(Key.Plus) not found
+                return GetKeyDown(Key.NumpadPlus) || GetKeyDown(Key.Equals);
 #elif ENABLE_LEGACY_INPUT_MANAGER
                 return Input.GetKeyDown(KeyCode.Plus) || Input.GetKeyDown(KeyCode.KeypadPlus);
 #else
@@ -134,6 +134,8 @@ namespace Sacristan.Ahhnold.Runtime
                 Destroy(this);
             }
 
+            isEnabled = false;
+
             guiStyle = new GUIStyle();
             guiStyle.normal.textColor = Color.white;
 
@@ -170,6 +172,9 @@ namespace Sacristan.Ahhnold.Runtime
             {
 #if !ENABLE_INPUT_SYSTEM && ENABLE_LEGACY_INPUT_MANAGER
                 HandleInput();
+#elif ENABLE_INPUT_SYSTEM
+                if (GetKeyDown(Key.Backspace) || GetKeyDown(Key.Delete)) DeleteLastChar();
+                if (GetKeyDown(Key.Enter) || GetKeyDown(Key.NumpadEnter)) SubmitCommand();
 #endif
                 ScaleText();
             }
@@ -282,23 +287,40 @@ namespace Sacristan.Ahhnold.Runtime
         {
             if (!isEnabled) return;
 
-            // Backspace - Remove the last character
+#if ENABLE_INPUT_SYSTEM
+            if (char.IsControl(c)) return;
+#else
             if (c == "\b"[0])
             {
-                if (inputTxt.Length != 0)
-                {
-                    inputTxt = inputTxt.Substring(0, inputTxt.Length - 1);
-                }
+                DeleteLastChar();
+                return;
             }
-            else if (c == "\n"[0] || c == "\r"[0]) // "\n" for Mac, "\r" for windows.
+
+            if (c == "\n"[0] || c == "\r"[0]) // "\n" for Mac, "\r" for windows.
             {
-                consoleController.RunCommandString(inputTxt);
-                inputTxt = string.Empty;
+                SubmitCommand();
+                return;
             }
-            else if (c != "`"[0] && c != "'"[0]) // Write text
+#endif
+
+            if (c != "`"[0] && c != "'"[0]) // Write text
             {
                 inputTxt += c;
             }
+        }
+
+        private void DeleteLastChar()
+        {
+            if (inputTxt.Length != 0)
+            {
+                inputTxt = inputTxt.Substring(0, inputTxt.Length - 1);
+            }
+        }
+
+        private void SubmitCommand()
+        {
+            consoleController.RunCommandString(inputTxt);
+            inputTxt = string.Empty;
         }
 
         private void ScaleText()
